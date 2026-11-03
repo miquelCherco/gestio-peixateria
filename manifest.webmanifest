@@ -1,9 +1,9 @@
 {
-  "id": "./gestio_peixateria_v5.html",
+  "id": "./",
   "name": "Gestió Peixateria",
   "short_name": "Peixateria",
   "description": "Gestió local de la peixateria",
-  "start_url": "./gestio_peixateria_v5.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f2f6f8",
