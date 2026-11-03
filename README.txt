@@ -1,23 +1,16 @@
-GESTIÓ PEIXATERIA v5 - IndexedDB + PWA (primera fase)
-
-Què incorpora:
-- IndexedDB com a emmagatzematge local principal.
-- Migració automàtica: si hi ha dades anteriors a localStorage (fish_v2_fallback), les copia a IndexedDB la primera vegada.
-- Es manté localStorage com a còpia de compatibilitat temporal.
-- Es manté l'exportació i importació de còpies JSON.
-- Manifest PWA, icones i service worker per poder instal·lar l'aplicació i obrir-la offline.
-- Sol·licitud d'emmagatzematge persistent al navegador quan aquest ho permet.
-
-IMPORTANT:
-1. Aquesta versió encara NO sincronitza PC i iPhone entre ells. Cada dispositiu té la seva base de dades local.
-2. Per instal·lar-la com a PWA a iPhone i disposar de service worker/offline, s'ha de publicar en un allotjament HTTPS. Obrir el fitxer HTML directament des de Fitxers no activa el service worker.
-3. A iPhone: obrir l'adreça publicada amb Safari > Compartir > Afegir a la pantalla d'inici.
-4. Abans de provar la migració, exportar una còpia JSON de les dades actuals.
-5. Supabase i la sincronització bidireccional són una fase posterior; no s'han configurat credencials ni servidor.
+GESTIÓ PEIXATERIA v6 - CORRECCIÓ DEL DESAMENT
 
 Fitxers:
-- gestio_peixateria_v5.html
-- manifest.webmanifest
-- sw.js
-- icon-192.png
-- icon-512.png
+- index.html: aplicació principal.
+- manifest.webmanifest: configuració PWA.
+- sw.js: memòria cau per obrir l'aplicació sense connexió després de la primera càrrega.
+- icon-192.png i icon-512.png: icones.
+
+Canvis d'aquesta correcció:
+- «Desar ara» desa i verifica les dades a IndexedDB; ja no obre l'explorador de fitxers.
+- El desament automàtic desa a IndexedDB.
+- L'explorador de fitxers només s'utilitza en importar JSON; l'exportació genera una descàrrega JSON.
+
+Per actualitzar GitHub Pages, puja i substitueix index.html, manifest.webmanifest, sw.js i les icones a l'arrel del repositori. Després espera que GitHub Pages acabi el desplegament. Si l'aplicació ja estava instal·lada, tanca-la completament i torna-la a obrir per carregar la versió nova.
+
+IMPORTANT: Les dades continuen sent locals a cada dispositiu. Aquesta versió encara no sincronitza PC i iPhone. Exporta periòdicament còpies JSON i prova primer amb dades fictícies.
