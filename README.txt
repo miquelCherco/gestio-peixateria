@@ -1,16 +1,16 @@
-GESTIÓ PEIXATERIA v6 - CORRECCIÓ DEL DESAMENT
+GESTIÓ PEIXATERIA v6.2
 
-Fitxers:
-- index.html: aplicació principal.
-- manifest.webmanifest: configuració PWA.
-- sw.js: memòria cau per obrir l'aplicació sense connexió després de la primera càrrega.
-- icon-192.png i icon-512.png: icones.
+Canvis:
+- Tancament diari amb primer i últim número de tiquet.
+- Desglossament per IVA: exempt, 4%, 10% i 21%.
+- Càlcul de quota i total segons IVA.
+- Historial i exportació CSV amb dades de tiquets i IVA.
+- El desament d'entitats espera la transacció IndexedDB i verifica que el registre existeixi abans de confirmar.
+- Formularis d'entitats limitats al seu contenidor.
 
-Canvis d'aquesta correcció:
-- «Desar ara» desa i verifica les dades a IndexedDB; ja no obre l'explorador de fitxers.
-- El desament automàtic desa a IndexedDB.
-- L'explorador de fitxers només s'utilitza en importar JSON; l'exportació genera una descàrrega JSON.
-
-Per actualitzar GitHub Pages, puja i substitueix index.html, manifest.webmanifest, sw.js i les icones a l'arrel del repositori. Després espera que GitHub Pages acabi el desplegament. Si l'aplicació ja estava instal·lada, tanca-la completament i torna-la a obrir per carregar la versió nova.
-
-IMPORTANT: Les dades continuen sent locals a cada dispositiu. Aquesta versió encara no sincronitza PC i iPhone. Exporta periòdicament còpies JSON i prova primer amb dades fictícies.
+Actualització:
+1. Exporta primer una còpia JSON des de la versió actual.
+2. Puja tots els fitxers d'aquest ZIP a l'arrel del repositori GitHub i substitueix els existents.
+3. Mantén index.html, manifest.webmanifest, sw.js i les dues icones al mateix nivell.
+4. Aquesta versió encara no inclou sincronització Supabase.
+5. Confirma amb la gestoria els tipus d'IVA aplicables a cada producte/operació. Els tipus mostrats són configuració inicial, no assessorament fiscal.
