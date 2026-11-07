@@ -1,19 +1,28 @@
-GESTIO PEIXATERIA - VERSIO 6.6
+GESTIO PEIXATERIA - VERSIO 6.7 (LOGIN + SINCRONITZACIO INICIAL)
 
-Canvi principal:
-- L'informe per a la gestoria s'ha refet per reproduir el format del document "Llistat d'I.V.A. d'arqueigs" que ha facilitat l'usuari.
-- Ara imprimeix només aquesta pàgina, en A4 horitzontal.
-- Inclou una línia per cada tancament de caixa del període, amb data, torn/tipus, número de registre, primer i últim tiquet, exempt, bases i quotes d'IVA (10%, 4% i 21%) i total net.
-- Inclou totals al peu i nombre de registres.
-- La versió de la memòria cau PWA s'ha incrementat per forçar l'actualització.
+NOVETATS
+- Login amb correu i contrasenya de Supabase Auth.
+- Conserva IndexedDB i permet continuar treballant offline un cop iniciada la sessio en aquell dispositiu.
+- Primera sincronitzacio: si no hi ha dades al nuvol, puja les dades locals.
+- Si detecta dades diferents als dos llocs, pregunta quina copia conservar. Si es tria el nuvol, descarrega abans una copia JSON local.
+- Sincronitza els canvis locals al nuvol quan hi ha connexio.
+- Taula privada per usuari amb RLS.
 
-Ús:
-1. A Balanços, selecciona el període.
-2. Prem "Imprimir informe per a la gestoria".
-3. Imprimeix o desa en PDF.
+CONFIGURACIO OBLIGATORIA ABANS D'UTILITZAR
+1. A Supabase, comprova que Authentication > Users conte el teu usuari i que coneixes la seva contrasenya.
+2. Obre SQL Editor i executa el fitxer supabase-setup.sql.
+3. Publica tots els fitxers d'aquesta carpeta al repositori GitHub Pages, substituint els anteriors.
+4. Obre la web amb Internet i inicia sessio amb el correu/contrasenya creats a Supabase.
+5. En el primer dispositiu, si la taula del nuvol esta buida, es pujaran les dades locals. Despres inicia sessio al segon dispositiu.
 
-Important:
-- Abans d'actualitzar GitHub, exporta una còpia JSON de les dades.
-- Substitueix els fitxers del repositori pels d'aquest ZIP.
-- S'ha comprovat la sintaxi JavaScript, però no s'ha fet una prova funcional completa en navegador.
-- El format s'ha adaptat a partir de la pàgina facilitada; confirma amb la gestoria que els camps i el tractament d'IVA coincideixen amb el seu procés.
+IMPORTANT / LIMITACIONS D'AQUESTA PRIMERA VERSIO
+- La clau sb_publishable es publica per disseny; no hi ha cap clau service_role al navegador. La seguretat depen de les politiques RLS del SQL.
+- La sincronitzacio desa un snapshot complet en una fila per usuari. No es una sincronitzacio camp-a-camp ni un motor de resolucio de conflictes multiusuari. Evita editar simultaniament des de dos dispositius.
+- Si treballes offline, els canvis es queden a IndexedDB. En recuperar connexio s'intenta pujar el snapshot local.
+- La primera autenticacio de cada dispositiu necessita Internet. Un dispositiu que no hagi iniciat sessio abans no pot autenticar-se offline.
+- Fes sempre una copia JSON abans de publicar i abans de la primera sincronitzacio.
+- Cal provar login, RLS i sincronitzacio real en Supabase abans de confiar-hi per a l'operativa diaria.
+- La sincronitzacio no substitueix una copia de seguretat externa.
+
+INFORME GESTORIA
+Es manté el format de l'informe Llistat d'I.V.A. d'arqueigs de la versio 6.6.
