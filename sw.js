@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gestio-peixateria-shell-v6-9';
+const CACHE_NAME = 'gestio-peixateria-v7-0';
 const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));

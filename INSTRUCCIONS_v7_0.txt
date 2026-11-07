@@ -1,0 +1,11 @@
+GESTIÓ PEIXATERIA v7.0 — SINCRONITZACIÓ AUTOMÀTICA
+
+1. Abans d'actualitzar, exporta una còpia JSON de cada dispositiu que tingui dades.
+2. A Supabase > SQL Editor, executa supabase-setup-v7.sql. No esborra la taula antiga peixateria_sync.
+3. Publica els fitxers d'aquesta carpeta a GitHub Pages substituint els anteriors.
+4. Actualitza la web (Ctrl+F5 a l'ordinador; tanca i torna a obrir la PWA a l'iPhone).
+5. Inicia sessió a cada dispositiu amb el mateix usuari. La primera connexió fusiona registres diferents; en cas d'IDs coincidents, preval la còpia local d'aquell dispositiu.
+6. Després, els canvis es desen localment i se sincronitzen automàticament; en tornar online, en obrir/recuperar el focus i cada 30 segons es comprova el núvol.
+
+IMPORTANT: abans del primer desplegament, fes còpies JSON. Si hi ha dades diferents als dos dispositius abans de la primera sincronització v7, la regla de primera fusió conserva registres únics i prioritza el registre local quan el mateix ID existeix als dos llocs.
+La sincronització per registre resol modificacions i eliminacions amb tombstones. Si dos dispositius modifiquen simultàniament el mateix registre, s'aplica la regla de darrera modificació segons el rellotge del dispositiu.
