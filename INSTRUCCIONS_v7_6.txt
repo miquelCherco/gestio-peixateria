@@ -1,0 +1,19 @@
+GESTIÓ PEIXATERIA — VERSIÓ 7.6
+
+Novetats:
+- Les pantalles de comandes, albarans i factures ja no mostren una taula amb tots els documents.
+- Per crear un document, fes servir «Crear document».
+- Per consultar-lo, pots cercar pel número o obrir «Consultar per client/proveïdor», seleccionar la persona i mostrar-ne els documents.
+- Els resultats de la consulta permeten obrir el document directament per consultar-lo o modificar-lo.
+- A Manteniment de clients i proveïdors, cada document disposa del botó «Obrir document», que carrega el document a la seva pantalla d'edició.
+- No cal executar cap SQL nou a Supabase.
+
+ACTUALITZACIÓ A GITHUB PAGES:
+1. Fes una còpia de seguretat JSON des de l'aplicació.
+2. Descomprimeix aquest ZIP.
+3. Entra a la carpeta gestio_peixateria_v7_6.
+4. Puja a l'arrel del repositori GitHub tots els fitxers que hi ha dins d'aquesta carpeta, substituint els anteriors.
+5. Fes Commit changes i espera que GitHub Pages publiqui els canvis.
+6. Obre l'aplicació i, si apareix l'avís de nova versió, prem «Actualitzar». Si no apareix, tanca i torna a obrir l'aplicació.
+
+Les dades es mantenen a IndexedDB i la sincronització Supabase existent no canvia.
