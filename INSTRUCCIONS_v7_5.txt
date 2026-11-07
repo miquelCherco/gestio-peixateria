@@ -1,0 +1,12 @@
+GESTIÓ PEIXATERIA v7.5 — INVENTARI
+
+Nou menú «Inventari»:
+- Mostra tots els articles amb estoc calculat en kg, últim cost €/kg i valor orientatiu.
+- Cerca per codi o descripció i filtres d'estoc positiu, zero o negatiu.
+- Permet introduir recompte físic per article i registra un moviment d'ajust amb la diferència.
+- No modifica moviments anteriors ni depèn de l'entrada de cada tiquet.
+- Es manté el menú «Estoc / merma» per registrar moviments puntuals.
+
+Important:
+L'estoc calculat no reflecteix les vendes de tiquets que no s'introdueixen. Per això cal fer un recompte físic inicial i repetir-lo periòdicament. Els ajustos es sincronitzen amb Supabase com la resta de moviments.
+Actualització: exporta còpia JSON i substitueix els fitxers a GitHub pel contingut d'aquesta carpeta. No cal SQL nou.

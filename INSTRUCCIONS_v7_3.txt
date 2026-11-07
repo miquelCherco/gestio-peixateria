@@ -1,0 +1,9 @@
+GESTIÓ PEIXATERIA v7.3
+
+- Avís de nova versió amb botó «Actualitzar». L'usuari decideix quan recarregar.
+- Comprovació en obrir, tornar a la pestanya i recuperar Internet.
+- En qualsevol document es pot escriure una descripció d'article manualment.
+- En desar, si existeix un article amb el mateix nom s'enllaça; si no, se'n crea un amb codi numèric i unitat kg.
+- En documents de client, el preu de línia es copia com a preu de venda inicial; en documents de proveïdor, com a cost inicial.
+- No cal executar cap SQL nou a Supabase.
+Abans d'actualitzar: exporta còpia JSON. Substitueix els fitxers de GitHub pel contingut d'aquesta carpeta.

@@ -1,0 +1,12 @@
+GESTIÓ PEIXATERIA v7.4
+
+Novetats:
+- A les fitxes de clients i proveïdors, la pestanya Documents incorpora tres filtres: Comandes, Albarans i Factures.
+- Només es mostren els documents del client o proveïdor seleccionat.
+- Cada fila mostra número, data, import i accions Veure i Imprimir.
+- El peu mostra el nombre de documents i la suma dels imports de la categoria seleccionada.
+- Es mantenen les funcions de sincronització Supabase, ús offline i actualització PWA de la v7.3.
+Actualització:
+1. Exporta una còpia JSON.
+2. Substitueix els fitxers publicats a GitHub pel contingut de la carpeta gestio_peixateria_v7_4.
+3. No cal executar SQL a Supabase.
