@@ -1,0 +1,17 @@
+GESTIO PEIXATERIA - VERSIO 6.8
+
+Aquesta versio corregeix la programacio de la sincronitzacio per als formularis que desen amb saveNow() i afegeix el boto "Sincronitzar ara".
+
+PUBLICACIO:
+1. Fes una copia JSON de les dades abans d'actualitzar.
+2. Substitueix a GitHub Pages els fitxers de l'aplicacio pels d'aquesta carpeta (index.html, sw.js, manifest.webmanifest i icones).
+3. Espera que GitHub Pages publiqui els canvis.
+4. Tanca i torna a obrir la web a cada dispositiu. Si continua mostrant la versio antiga, fes una recarrega completa o elimina i torna a afegir la PWA a la pantalla d'inici.
+
+SINCRONITZACIO:
+- Despres de desar, l'aplicacio intenta pujar els canvis automàticament al cap d'uns 2 segons si hi ha connexio i sessio activa.
+- El boto "Sincronitzar ara" permet forcar una comprovacio manual.
+- La sincronitzacio actualitza una copia completa de les dades. Evita editar simultaniament des de dos dispositius: no hi ha fusio automàtica de registres.
+- Si apareix un avís de dades diferents, llegeix-lo abans de triar. En l'opcio de carregar les dades del nuvol, es descarrega una copia JSON local abans de substituir les dades del dispositiu.
+
+No s'ha modificat l'esquema SQL de Supabase respecte a la v6.7.

@@ -26,3 +26,9 @@ IMPORTANT / LIMITACIONS D'AQUESTA PRIMERA VERSIO
 
 INFORME GESTORIA
 Es manté el format de l'informe Llistat d'I.V.A. d'arqueigs de la versio 6.6.
+
+
+VERSIÓ 6.8 - SINCRONITZACIÓ
+- Els desaments que utilitzen saveNow() ara programen la pujada automàtica al núvol (retard aproximat de 2 segons).
+- S’afegeix el botó «Sincronitzar ara» per forçar la comprovació/sincronització manual.
+- Si hi ha dades diferents entre el dispositiu i el núvol, es manté el diàleg de decisió i la còpia de seguretat abans de substituir dades locals.

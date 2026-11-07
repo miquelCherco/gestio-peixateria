@@ -2,7 +2,7 @@
 <html lang="ca">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Gestió Peixateria v6.7</title>
+<title>Gestió Peixateria v6.9</title>
 <meta name="theme-color" content="#17324d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -33,7 +33,7 @@ input,select,textarea{width:100%;padding:9px;border:1px solid #c8d5dc;border-rad
 @page{size:A4 landscape;margin:8mm}
 @media print{body{font-family:Arial,sans-serif!important;color:#111!important}#printArea .manager-report{width:100%;max-width:none;margin:0;padding:0;border:0;font-size:8px}.manager-title{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid #777;margin-bottom:8px;padding-bottom:5px}.manager-title h2{font-size:16px;margin:0;color:#111}.manager-period{display:flex;justify-content:space-between;margin:5px 0 8px;font-size:9px}.arqueig-table{width:100%;table-layout:fixed;border-collapse:collapse}.arqueig-table th,.arqueig-table td{font-size:7px;padding:4px 2px;border:0;border-bottom:1px solid #ddd;white-space:nowrap;text-align:center;color:#111}.arqueig-table thead th{background:#eee!important;position:static;white-space:normal;border-top:1px solid #777;border-bottom:1px solid #777}.arqueig-table td.num,.arqueig-table tfoot .num{text-align:right}.arqueig-table tfoot th{background:#eee!important;border-top:1px solid #555;font-weight:bold}.manager-foot{display:flex;justify-content:space-between;border-top:1px solid #777;margin-top:8px;padding-top:4px;font-size:7px}.manager-report .no-print{display:none!important}}
 </style></head><body>
-<header><img id="logo" alt="Logo"><div style="flex:1"><h1 id="brand">Gestió Peixateria</h1><p id="saveState">Base de dades local · preparant emmagatzematge…</p></div><div id="cloudHeader" style="text-align:right;font-size:12px"><span id="cloudState">Sessió no iniciada</span><br><button id="logoutBtn" onclick="logoutCloud()" style="display:none;margin-top:4px">Tancar sessió</button></div></header>
+<header><img id="logo" alt="Logo"><div style="flex:1"><h1 id="brand">Gestió Peixateria</h1><p id="saveState">Base de dades local · preparant emmagatzematge…</p></div><div id="cloudHeader" style="text-align:right;font-size:12px"><span id="cloudState">Sessió no iniciada</span><br><button id="syncNowBtn" onclick="syncNowCloud()" style="display:none;margin-top:4px">Sincronitzar ara</button> <button id="logoutBtn" onclick="logoutCloud()" style="display:none;margin-top:4px">Tancar sessió</button></div></header>
 <div id="authGate" style="max-width:520px;margin:24px auto;padding:16px">
  <div class="box"><h2>Accés a la peixateria</h2><p class="muted">Inicia sessió per accedir a les dades i sincronitzar-les entre dispositius. Un cop iniciada la sessió, podràs continuar treballant sense connexió amb les dades locals.</p>
  <div id="authForm"><label>Correu electrònic</label><input id="authEmail" type="email" autocomplete="username" placeholder="El correu del compte Supabase"><label style="margin-top:10px">Contrasenya</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Contrasenya"><div class="toolbar" style="margin-top:12px"><button class="primary" onclick="loginCloud()">Iniciar sessió</button></div></div>
@@ -89,7 +89,7 @@ const SUPABASE_URL='https://smioddknaevgdadhjhjy.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_fpMn_p7uV2sBYF_zpVLvMg_Ty4Gs8V2';
 let cloudClient=null,cloudUser=null,cloudSyncBusy=false,cloudSyncTimer=null,cloudReady=false,cloudLastRemote=null;
 function setCloudState(msg,isError=false){const e=document.getElementById('cloudState');if(e){e.textContent=msg;e.style.color=isError?'#ffd0ca':'#d4e2e9'}const a=document.getElementById('authMessage');if(a&&isError)a.textContent=msg}
-function showAuthenticatedApp(on){document.getElementById('authGate').style.display=on?'none':'block';document.getElementById('appShell').style.display=on?'block':'none';document.getElementById('logoutBtn').style.display=on?'inline-block':'none'}
+function showAuthenticatedApp(on){document.getElementById('authGate').style.display=on?'none':'block';document.getElementById('appShell').style.display=on?'block':'none';document.getElementById('logoutBtn').style.display=on?'inline-block':'none';const syncBtn=document.getElementById('syncNowBtn');if(syncBtn)syncBtn.style.display=on?'inline-block':'none'}
 function hasBusinessData(x){return !!(x&&['clients','suppliers','articles','docs','lotja','moves','cash'].some(k=>Array.isArray(x[k])&&x[k].length));}
 function downloadSnapshot(snapshot,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
 async function uploadCloudSnapshot(snapshot){if(!cloudClient||!cloudUser)throw Error('No hi ha sessió activa');const row={owner_id:cloudUser.id,payload:snapshot,updated_at:new Date().toISOString()};const {error}=await cloudClient.from('peixateria_sync').upsert(row,{onConflict:'owner_id'});if(error)throw error;cloudLastRemote=row.updated_at;localStorage.setItem('peix_cloud_dirty','0');setCloudState('Sincronitzat · '+new Date().toLocaleTimeString('ca-ES'));return true}
@@ -108,6 +108,21 @@ async function syncAfterLogin(){if(!cloudClient||!cloudUser||cloudSyncBusy)retur
  }catch(e){console.error('Error de sincronització',e);setCloudState('Error de sincronització: '+(e.message||e),true);}finally{cloudSyncBusy=false;}}
 function scheduleCloudSync(){if(!cloudUser&&localStorage.getItem('peix_authenticated_once')!=='1')return;localStorage.setItem('peix_cloud_dirty','1');if(!navigator.onLine){setCloudState('Sense connexió · canvis pendents');return;}if(!cloudUser)return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(async()=>{if(cloudSyncBusy)return;cloudSyncBusy=true;try{await writeQueue;await uploadCloudSnapshot(JSON.parse(JSON.stringify(db)));}catch(e){console.error(e);setCloudState('Canvis locals pendents · '+(e.message||e),true);}finally{cloudSyncBusy=false;}},1800)}
 async function loginCloud(){const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value;if(!email||!password){setCloudState('Introdueix el correu i la contrasenya.',true);return;}if(!cloudClient){setCloudState('No s’ha pogut carregar el client de Supabase. Comprova la connexió.',true);return;}const btn=document.querySelector('#authForm button');btn.disabled=true;try{const {data,error}=await cloudClient.auth.signInWithPassword({email,password});if(error)throw error;cloudUser=data.user;localStorage.setItem('peix_authenticated_once','1');showAuthenticatedApp(true);await syncAfterLogin();}catch(e){setCloudState('No s’ha pogut iniciar sessió: '+(e.message||e),true);}finally{btn.disabled=false;}}
+async function syncNowCloud(){
+  if(!cloudClient||!cloudUser){setCloudState('Inicia sessió per sincronitzar.',true);return;}
+  if(cloudSyncBusy){setCloudState('Ja hi ha una sincronització en curs. Espera un moment.');return;}
+  const btn=document.getElementById('syncNowBtn');
+  if(btn)btn.disabled=true;
+  try{
+    await writeQueue;
+    await syncAfterLogin();
+  }catch(e){
+    console.error('Error en la sincronització manual',e);
+    setCloudState('No s’ha pogut sincronitzar: '+(e.message||e),true);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
 async function logoutCloud(){if(!confirm('Vols tancar la sessió? Les dades locals es conservaran en aquest dispositiu.'))return;try{await cloudClient.auth.signOut();}catch(e){console.warn(e)}cloudUser=null;localStorage.removeItem('peix_authenticated_once');showAuthenticatedApp(false);setCloudState('Sessió tancada');}
 async function initCloud(){try{if(!window.supabase?.createClient){setCloudState('No s’ha pogut carregar Supabase · cal Internet',true);return;}cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const {data,error}=await cloudClient.auth.getSession();if(error)throw error;if(data.session){cloudUser=data.session.user;localStorage.setItem('peix_authenticated_once','1');showAuthenticatedApp(true);await syncAfterLogin();}else{showAuthenticatedApp(false);setCloudState('Cal iniciar sessió');}cloudClient.auth.onAuthStateChange((_event,session)=>{if(session?.user){cloudUser=session.user;showAuthenticatedApp(true);setTimeout(()=>syncAfterLogin(),0);}else if(cloudUser){cloudUser=null;showAuthenticatedApp(false);}});cloudReady=true;}catch(e){console.error(e);setCloudState('Error inicialitzant Supabase: '+(e.message||e),true);}}
 window.addEventListener('online',()=>{if(!cloudClient){initCloud();return;}if(!cloudUser){initCloud();return;}if(localStorage.getItem('peix_cloud_dirty')==='1')scheduleCloudSync();else syncAfterLogin();});
@@ -144,6 +159,7 @@ async function saveNow(){
     const check=await readLocalDB();
     if(!check)throw Error('No s’han pogut verificar les dades desades');
     if(state)state.textContent='Dades desades i verificades en aquest dispositiu · '+new Date().toLocaleTimeString('ca-ES');
+    scheduleCloudSync();
     const info=document.getElementById('fileStatus');
     if(info)info.textContent='Desament local correcte. Per fer una còpia externa, utilitza «Exportar còpia JSON».';
   }catch(e){
@@ -158,32 +174,80 @@ function download(data,name,type){let a=document.createElement('a');a.href=URL.c
 function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===p));document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));document.querySelectorAll('.dropdown').forEach(x=>x.classList.remove('open'));if(['clients','suppliers','articles'].includes(p))refreshEntity(p);if(TYPES[p])renderDocList(p);if(p==='lotja'){resetLotjaForm();renderLotja();}if(p==='cash')renderCash();if(p==='reports')renderReports();if(p==='stock')renderMoves();scrollTo(0,0)}
 function toggleMenu(id){let el=document.getElementById(id),was=el.classList.contains('open');document.querySelectorAll('.dropdown').forEach(x=>x.classList.remove('open'));if(!was)el.classList.add('open')}
 function initUI(){buildForms();refreshSelects();for(let t of Object.keys(FIELDS))refreshEntity(t);loadConfig();renderLotja();renderMoves();renderCash();renderReports();refreshHome();document.getElementById('cashDate').value||=today();['cashExempt','cashBase4','cashBase10','cashBase21'].forEach(k=>document.getElementById(k).addEventListener('input',renderCashTaxSummary));document.getElementById('lotjaDate').value||=today();document.getElementById('reportTo').value||=today();document.getElementById('reportFrom').value||=today().slice(0,8)+'01'}
-function normalizeData(){db.clients ||= [];db.suppliers ||= [];db.articles ||= [];db.docs ||= [];db.lotja ||= [];db.moves ||= [];db.cash ||= [];db.attachments ||= {clients:{},suppliers:{},articles:{}};for(const d of db.docs){let m=String(d.number||'').match(/(\d+)\s*$/);if(m)d.number=String(parseInt(m[1],10));}for(const a of db.articles){a.origin ||= '';a.conservation ||= '';a.calibre ||= '';}}
+function normalizeData(){
+  db.clients ||= [];db.suppliers ||= [];db.articles ||= [];db.docs ||= [];db.lotja ||= [];db.moves ||= [];db.cash ||= [];
+  db.attachments ||= {clients:{},suppliers:{},articles:{}};
+  // Els registres antics/importats poden no tenir ID o tenir-lo com a número.
+  // Normalitzem la identitat perquè la selecció i la modificació funcionin igual a tots els dispositius.
+  for(const t of ['clients','suppliers','articles']){
+    for(const item of db[t]){
+      if(!item.id)item.id=id();
+      item.id=String(item.id);
+    }
+    if(selected[t]!=null)selected[t]=String(selected[t]);
+  }
+  for(const d of db.docs){let m=String(d.number||'').match(/(\d+)\s*$/);if(m)d.number=String(parseInt(m[1],10));}
+  for(const a of db.articles){a.origin ||= '';a.conservation ||= '';a.calibre ||= '';}
+}
 async function load(){let fromIdb=null;try{fromIdb=await readLocalDB()}catch(e){console.warn('IndexedDB no disponible; s’utilitzarà localStorage',e)}if(fromIdb&&typeof fromIdb==='object'){db=fromIdb}else{try{let v=localStorage.getItem('fish_v2_fallback');if(v){db=JSON.parse(v);await writeLocalDB(JSON.parse(JSON.stringify(db)))}}catch(e){console.warn('No s’han pogut recuperar les dades locals',e)}}normalizeData();try{if(navigator.storage?.persist){let granted=await navigator.storage.persist();if(granted)console.info('Emmagatzematge persistent concedit')}}catch(e){console.warn('No s’ha pogut sol·licitar persistència',e)}}
 function buildForms(){for(let t in FIELDS){document.getElementById('form-'+t).innerHTML=FIELDS[t].map(([k,l,typ])=>`<div class="${typ==='textarea'?'full':''}"><label>${l}</label>${typ==='textarea'?`<textarea data-t="${t}" data-k="${k}"></textarea>`:`<input data-t="${t}" data-k="${k}" type="${typ}"  ${typ==='number'?'step="0.01"':''}>`}</div>`).join('')}}
 function nextCode(t){let n=Math.max(0,...db[t].map(x=>parseInt(String(x.code||'').trim(),10)||0))+1;return String(n)}
 function formObj(t){let o={},root=document.getElementById('form-'+t);if(!root)throw Error('No s’ha trobat el formulari '+t);root.querySelectorAll('[data-k]').forEach(e=>o[e.dataset.k]=e.value);return o}function putForm(t,o={}){let root=document.getElementById('form-'+t);if(!root)return;root.querySelectorAll('[data-k]').forEach(e=>e.value=o[e.dataset.k]??'')}
-function freshEntity(t){selected[t]=null;putForm(t,{code:nextCode(t)});details(t)}function editEntity(t){let o=db[t].find(x=>x.id===selected[t]);if(!o)return alert('Selecciona un registre.');putForm(t,o)}
+function freshEntity(t){
+  selected[t]=null;
+  putForm(t,{code:nextCode(t)});
+  const state=document.getElementById('saveState');
+  if(state)state.textContent='Nou registre de '+(t==='clients'?'clients':t==='suppliers'?'proveïdors':'articles')+' · completa els camps i prem Desar';
+  details(t);
+}
+function editEntity(t){
+  const key=selected[t]==null?null:String(selected[t]);
+  const o=db[t].find(x=>String(x.id)===key);
+  if(!o)return alert('Selecciona primer un registre de la llista que vols modificar.');
+  selected[t]=String(o.id);
+  putForm(t,o);
+  const state=document.getElementById('saveState');
+  if(state)state.textContent='Modificant: '+(o.name||o.code||'registre')+' · fes els canvis i prem Desar';
+  details(t);
+}
 async function saveEntity(t){
-  let o;try{o=formObj(t)}catch(e){alert(e.message);return}
+  let o;
+  try{o=formObj(t)}catch(e){alert(e.message);return}
   if(!o.name?.trim())return alert('El nom o descripció és obligatori.');
   o.code=String(o.code||'').trim()||nextCode(t);
-  let old=db[t].find(x=>x.id===selected[t]);
-  if(db[t].some(x=>String(x.code||'').trim()===o.code&&x.id!==old?.id))return alert('Aquest codi ja existeix. Introdueix-ne un altre.');
+  const selectedId=selected[t]==null?null:String(selected[t]);
+  const old=selectedId===null?null:db[t].find(x=>String(x.id)===selectedId);
+  if(selectedId!==null&&!old)return alert('No s’ha trobat el registre seleccionat. Torna’l a seleccionar a la llista abans de modificar-lo.');
+  if(db[t].some(x=>String(x.code||'').trim()===o.code&&String(x.id)!==String(old?.id??'')))return alert('Aquest codi ja existeix. Introdueix-ne un altre.');
   const previous=JSON.parse(JSON.stringify(db[t]));
-  if(old)Object.assign(old,o);else{o.id=id();db[t].push(o);selected[t]=o.id}
+  const recordId=old?String(old.id):id();
+  if(old){Object.assign(old,o);old.id=recordId;}
+  else{o.id=recordId;db[t].push(o);}
+  selected[t]=recordId;
   try{
     await persist();
     const check=await readLocalDB();
-    if(!check||!Array.isArray(check[t])||!check[t].some(x=>x.id===o.id))throw Error('El registre no s’ha trobat en verificar IndexedDB.');
+    if(!check||!Array.isArray(check[t])||!check[t].some(x=>String(x.id)===recordId))throw Error('El registre no s’ha trobat en verificar IndexedDB.');
     refreshEntity(t);refreshSelects();
     const state=document.getElementById('saveState');
-    if(state)state.textContent='Registre desat i verificat · '+new Date().toLocaleTimeString('ca-ES');
-  }catch(e){db[t]=previous;selected[t]=old?.id||null;refreshEntity(t);alert('No s’ha pogut desar el registre: '+(e.message||e));}
+    if(state)state.textContent=(old?'Modificació desada':'Registre creat')+' i verificat · '+new Date().toLocaleTimeString('ca-ES');
+  }catch(e){
+    db[t]=previous;selected[t]=old?recordId:null;refreshEntity(t);
+    alert('No s’ha pogut desar el registre: '+(e.message||e));
+  }
 }
-function deleteEntity(t){let o=db[t].find(x=>x.id===selected[t]);if(!o)return alert('Selecciona un registre.');if(confirm('Eliminar '+o.name+'?')){db[t]=db[t].filter(x=>x.id!==o.id);selected[t]=null;persist();refreshEntity(t);refreshSelects()}}
+async function deleteEntity(t){
+  const key=selected[t]==null?null:String(selected[t]);
+  const o=db[t].find(x=>String(x.id)===key);
+  if(!o)return alert('Selecciona un registre.');
+  if(!confirm('Eliminar '+o.name+'?'))return;
+  const previous=JSON.parse(JSON.stringify(db[t]));
+  db[t]=db[t].filter(x=>String(x.id)!==key);selected[t]=null;
+  try{await persist();refreshEntity(t);refreshSelects();}
+  catch(e){db[t]=previous;selected[t]=key;refreshEntity(t);alert('No s’ha pogut eliminar el registre: '+(e.message||e));}
+}
 function refreshEntity(t){renderEntityTable(t);putForm(t,db[t].find(x=>x.id===selected[t])||{code:nextCode(t)});details(t)}
-function renderEntityTable(t){let q=(document.getElementById('search-'+t).value||'').toLowerCase();document.getElementById('table-'+t).innerHTML=db[t].filter(x=>(x.code+' '+x.name).toLowerCase().includes(q)).map(x=>`<tr class="${selected[t]===x.id?'selected':''}" onclick="selectEntity('${t}','${x.id}')"><td>${esc(x.code)}</td><td>${esc(x.name)}</td></tr>`).join('')}
+function renderEntityTable(t){let q=(document.getElementById('search-'+t).value||'').toLowerCase();document.getElementById('table-'+t).innerHTML=db[t].filter(x=>(x.code+' '+x.name).toLowerCase().includes(q)).map(x=>`<tr class="${String(selected[t])===String(x.id)?'selected':''}" onclick="selectEntity('${t}','${x.id}')"><td>${esc(x.code)}</td><td>${esc(x.name)}</td></tr>`).join('')}
 function selectEntity(t,i){selected[t]=i;refreshEntity(t)}function entityTab(t,s){document.querySelectorAll('#'+t+' .tab').forEach(x=>x.classList.toggle('active',x.id===t+'-'+s))}
 function articleStock(articleId){return db.moves.filter(m=>m.articleId===articleId).reduce((s,m)=>s+(Number(m.qty)||0),0)}
 function latestPurchasePrice(o){let candidates=[];db.lotja.filter(x=>x.articleId===o.id).forEach(x=>candidates.push({date:x.date,price:+x.price||0}));db.docs.filter(d=>d.type==='supplier_delivery').forEach(d=>(d.lines||[]).filter(l=>l.articleId===o.id).forEach(l=>candidates.push({date:d.date,price:+l.price||0})));candidates.sort((a,b)=>String(b.date).localeCompare(String(a.date)));return candidates.length?candidates[0].price:(o.lastPurchasePrice??o.cost??'')}
