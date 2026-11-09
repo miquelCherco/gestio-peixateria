@@ -1,0 +1,16 @@
+GESTIÓ PEIXATERIA — VERSIÓ 7.8
+
+Canvi principal: recompte d’inventari amb entrada manual de quantitats.
+
+- Els camps de quantitat física ja no mostren les fletxes d’increment/decrement.
+- Es pot escriure directament la quantitat exacta, incloent decimals.
+- S’accepta coma o punt decimal (per exemple, 2,750 o 2.750).
+- L’aplicació calcula la diferència respecte de l’estoc actual i demana confirmació abans de registrar l’ajust.
+- Es manté la resta de funcionalitats de la versió 7.7.
+- No cal executar cap SQL nou a Supabase.
+
+ACTUALITZACIÓ
+1. Fes una còpia de seguretat JSON.
+2. Descomprimeix el ZIP.
+3. Puja el contingut de la carpeta gestio_peixateria_v7_8_inventari_manual a l’arrel del repositori GitHub, substituint els fitxers anteriors.
+4. Fes commit i espera que GitHub Pages publiqui els canvis.
