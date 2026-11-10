@@ -1,0 +1,21 @@
+GESTIÓ PEIXATERIA — VERSIÓ 8.0
+
+NOVETATS
+- Manteniment d'articles: unitat per defecte seleccionable entre kg i unitat.
+- En afegir un article a una línia de document, s'aplica automàticament la seva unitat per defecte.
+- A totes les línies de comandes, albarans i factures es pot canviar la unitat entre kg i unitat.
+- Cada línia incorpora un camp d'observacions propi.
+- Les unitats i observacions es conserven en convertir documents.
+- Les línies en unitats no generen moviments d'estoc en kg; només les línies en kg afecten l'estoc.
+- Cada document pot tenir un document relacionat opcional. La relació es mostra en editar i imprimir, tant des del document origen com des del document relacionat.
+- Les conversions automàtiques mantenen la relació amb el document d'origen.
+- Els documents antics es mantenen compatibles: si no tenien unitat, s'interpreten com a kg.
+
+ACTUALITZACIÓ
+1. Fes una còpia de seguretat JSON abans d'actualitzar.
+2. Descomprimeix el ZIP.
+3. Puja TOT el contingut de la carpeta gestio_peixateria_v8_0_unitats_relacions a l'arrel del repositori GitHub, substituint els fitxers anteriors.
+4. Fes commit dels canvis.
+5. Obre l'aplicació i comprova la nova versió.
+
+No cal executar cap SQL nou a Supabase.

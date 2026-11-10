@@ -1,0 +1,17 @@
+GESTIÓ PEIXATERIA — VERSIÓ 7.9
+
+NOVETATS
+- Conversió directa de comanda a albarà per a clients i proveïdors.
+- Conversió directa d'albarà a factura per a clients i proveïdors.
+- Es copien client/proveïdor, línies, quantitats, preus, referència i notes.
+- La conversió queda vinculada al document d'origen i evita crear-ne una segona des del mateix origen.
+- Convertir un albarà de client en factura no duplica el moviment d'estoc que ja havia generat l'albarà.
+
+ACTUALITZACIÓ
+1. Fes una còpia de seguretat JSON abans d'actualitzar.
+2. Descomprimeix el ZIP.
+3. Puja TOT el contingut de la carpeta gestio_peixateria_v7_9_conversion_documents a l'arrel del repositori GitHub, substituint els fitxers anteriors.
+4. Fes commit dels canvis.
+5. Obre l'aplicació i comprova la nova versió.
+
+No cal executar cap SQL nou a Supabase.
